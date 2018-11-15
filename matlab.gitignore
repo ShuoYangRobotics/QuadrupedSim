@@ -23,3 +23,5 @@ codegen/
 
 # Simulink autosave extension
 *.autosave
+
+*.slxc
