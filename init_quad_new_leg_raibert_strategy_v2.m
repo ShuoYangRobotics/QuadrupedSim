@@ -46,7 +46,7 @@ planner.init_shake_ang = 3/180*pi;
 planner.tgt_body_ang = 0;
 planner.tgt_body_vx = 0.20;
 planner.Ts = -0.15; % for leg place
-planner.Kv = 0.09;  % for leg place
+planner.Kv = 0.15;  % for leg place
 
 % state transition thredsholds
 planner.state0_vel_thres = 0.05;
