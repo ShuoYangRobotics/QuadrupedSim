@@ -44,9 +44,13 @@ planner.init_shake_ang = 3/180*pi;
 
 %some gait control goals
 planner.tgt_body_ang = 0;
-planner.tgt_body_vx = 0.20;
-planner.Ts = -0.15; % for leg place
-planner.Kv = 0.15;  % for leg place
+planner.tgt_body_vx = 0.25;
+planner.Ts = -0.17; % for x_direction leg place
+planner.Kv = 0.36;  % for x_dreiction leg place
+
+
+planner.y_Ts = 0.02; % for y_direction leg place
+planner.y_Kv = 0.01;  % for y_direction leg place
 
 % state transition thredsholds
 planner.state0_vel_thres = 0.05;
