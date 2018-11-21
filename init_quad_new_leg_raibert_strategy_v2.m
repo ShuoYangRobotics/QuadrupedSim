@@ -49,8 +49,8 @@ planner.Ts = -0.17; % for x_direction leg place
 planner.Kv = 0.36;  % for x_dreiction leg place
 
 
-planner.y_Ts = 0.02; % for y_direction leg place
-planner.y_Kv = 0.01;  % for y_direction leg place
+planner.y_Ts = 0.18; % for y_direction leg place
+planner.y_Kv = -0.29;  % for y_direction leg place
 
 % state transition thredsholds
 planner.state0_vel_thres = 0.05;
@@ -59,7 +59,7 @@ planner.state0_trans_thres = 300; %(0.75 seconds)
 planner.state0_swing_ang  = 10*pi/180;
 planner.state0_swing_T = 1200;
 planner.state12_trans_speed = 0.2;
-planner.leg_swing_time = 75; %(use 0.25s to generate a motion)
+planner.leg_swing_time = 70; %(use 0.25s to generate a motion)
 
 %robot weight 
 body_weight = 600*body.x_length*body.y_length*body.z_length;
