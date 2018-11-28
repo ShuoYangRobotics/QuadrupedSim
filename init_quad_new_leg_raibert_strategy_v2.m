@@ -2,7 +2,7 @@
 % Professor Hartmut Geyer
 addpath(genpath(fullfile(pwd,'contat_lib')));
 %parameters for ground plane geometry and contract
-ground.stiff = 5e3;
+ground.stiff = 5e4;
 ground.damp = 1000;
 ground.height = 0.4;
 
@@ -44,13 +44,13 @@ planner.init_shake_ang = 3/180*pi;
 
 %some gait control goals
 planner.tgt_body_ang = 0;
-planner.tgt_body_vx = 0.25;
-planner.Ts = -0.17; % for x_direction leg place
-planner.Kv = 0.36;  % for x_dreiction leg place
+planner.tgt_body_vx = 0.15;
+planner.Ts = 0.1; % for x_direction leg place
+planner.Kv = 0.1;  % for x_dreiction leg place
 
 
-planner.y_Ts = 0.18; % for y_direction leg place
-planner.y_Kv = -0.29;  % for y_direction leg place
+planner.y_Ts = 0.21; % for y_direction leg place
+planner.y_Kv = -0.34;  % for y_direction leg place
 
 % state transition thredsholds
 planner.state0_vel_thres = 0.05;
