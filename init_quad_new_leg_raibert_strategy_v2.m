@@ -44,9 +44,9 @@ planner.init_shake_ang = 3/180*pi;
 
 %some gait control goals
 planner.tgt_body_ang = 0;
-planner.tgt_body_vx = 0.15;
+planner.tgt_body_vx = 0.3;  % tested 0.15-0.45
 planner.Ts = 0.1; % for x_direction leg place
-planner.Kv = 0.1;  % for x_dreiction leg place
+planner.Kv = 0.3;  % for x_dreiction leg place
 
 
 planner.y_Ts = 0.21; % for y_direction leg place
@@ -69,4 +69,6 @@ upperleg_weight = leg_density*0.04*0.04*body.upper_length;
 lowerleg_weight = leg_density*0.04*0.04*body.lower_length;
 foot_weight = 1000*4/3*pi*body.foot_radius^3;
 
-total_weight = body_weight + 4*(should_weight+upperleg_weight+lowerleg_weight+foot_weight)
+total_weight = body_weight + 4*(should_weight+upperleg_weight+lowerleg_weight+foot_weight);
+
+body_inertia = diag([0.151875;0.516375;0.6075]);
