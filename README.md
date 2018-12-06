@@ -23,6 +23,15 @@ Helper code:
 
 
 **quad_XXXX.slx** will be the name of different models. I will make sure all **quad_XXXX.sx** file has a corresponding **init_quad_XXXX.m** initialization file. 
+
+By Dec-6-2018, the best running model is 
+
+*quad_new_leg_raibert_strategy_v2.slx*
+
+and its init file
+
+*init_quad_new_leg_raibert_strategy_v2.m*
+
  
 
 
