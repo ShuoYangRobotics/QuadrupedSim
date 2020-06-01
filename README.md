@@ -1,3 +1,12 @@
+Starting Jun 2020, I will reactivate this repo and use it to help a onging research
+Revise a number of conventions
+
+
+
+----------------------------------------------------------
+-                  Old Code And Old README               -
+----------------------------------------------------------
+
 Two years ago after reading "Legged Robots that Balance", I started to work on a MATLAB simulation of a quadruped robot. Initially this project is put in my "toy_code" repo. This semester I will use this quadruped robot for two of my CMU course projects. So it is necessary to create a dedicated repository for it. 
 
 [![robot](https://img.youtube.com/vi/ByDtmprLmHg/0.jpg)](https://www.youtube.com/watch?v=ByDtmprLmHg)
