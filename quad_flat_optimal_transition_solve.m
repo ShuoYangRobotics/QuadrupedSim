@@ -5,6 +5,14 @@ addpath('../CasADi')
 import casadi.*   
 lambda = [];
 
+%%scale state
+com_pos_start = robot_state1(1:3);
+ref_com_pos_start = com_pos_start;
+robot_state1(1:3) = robot_state1(1:3) - ref_com_pos_start;
+robot_state2(1:3) = robot_state2(1:3) - ref_com_pos_start;
+robot_state1(19:30) = robot_state1(19:30)/100;
+robot_state2(19:30) = robot_state2(19:30)/100;
+
 %% calculate an initial transition state
 transition_state_init = quad_optimal_transition_init_state(param, robot_state1, robot_state2);
 save('quad_optimal_transition_init_state', 'transition_state_init', 'robot_state1', 'robot_state2');

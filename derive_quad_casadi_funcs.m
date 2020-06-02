@@ -301,10 +301,25 @@ dwb = B*com_ang_acc;
 
 % body inertia
 I = quad_param.body_inertia/100;
-grasp_tgt = [[0;
+grasp_tgt = [R_ec'*[0;
               0;
-              param.total_mass/100*param.g]+param.total_mass/100*com_acc;
+              param.total_mass/100*param.g]+param.total_mass/100*R_ec'*com_acc;
              I*dwb+VecToso3(wb)*I*wb]; 
+
+% swing foot dynamics
+for i=1:param.leg_num
+    phase_time = sp.getPhaseTime(sym_state,i,1);
+    add_weight  = if_else(cur_t >= phase_time(1) & cur_t < phase_time(2), 1, 0);
+    grasp_tgt = grasp_tgt + add_weight*[[0;0;0];...
+       -VecToso3(param.t_cs(:,i))*R_ec'*[0;0;(param.upper_leg_mass+param.lower_leg_mass)/100*param.g]];
+%     % no dynamics yet
+%     foot_pos = foot_pos(:,i);
+%     foot_vel = foot_pos.jacobian(cur_t);
+%     foot_acc = foot_vel.jacobian(cur_t); 
+%     grasp_tgt = grasp_tgt + [(param.upper_leg_mass+param.lower_leg_mass)*R_ec'*foot_acc;]
+end
+
+         
 ceq_block = grasp_mtx*foot_force - grasp_tgt;  
 casadi_quad_sx_ceq_block_func = Function('ceq_block_function',{cur_t, sym_state, sym_p_0, sym_p_T, sym_F_0, sym_F_T, sym_com_0, sym_com_T, sym_com_ang_0, sym_com_ang_T},...
       {ceq_block},...
@@ -326,3 +341,22 @@ save('casadi_state_derive_quad','casadi_sx_com_angle_func',...
                                'casadi_sx_com_pos_func',...
                                'casadi_sx_list_force_func',...
                                'casadi_sx_list_swing_pos_func'); 
+                           
+disp('generate state code')   
+opts = struct('mex', true,'cpp',true);
+
+casadi_sx_com_angle_func.generate('casadi_sx_com_angle_func_code.cpp');              
+casadi_sx_com_pos_func.generate('casadi_sx_com_pos_func_code.cpp');  
+
+C_force = CodeGenerator('casadi_sx_list_force_func_code.cpp');
+for i=1:param.leg_num
+C_force.add(casadi_sx_list_force_func{i});
+end
+C_force.generate();
+
+C_pos = CodeGenerator('casadi_sx_list_swing_pos_func_code.cpp');
+for i=1:param.leg_num
+    C_pos.add(casadi_sx_list_swing_pos_func{i});
+end
+C_pos.generate();                           
+                           

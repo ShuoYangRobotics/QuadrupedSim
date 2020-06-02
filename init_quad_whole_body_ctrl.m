@@ -41,7 +41,7 @@ quad_param.leg_l1 = quad_param.upper_length;
 quad_param.leg_l2 = quad_param.lower_length+quad_param.foot_radius;
 
 %% leg mounts. Used to calculate R_cs t_cs
-dx = quad_param.x_length/2-0.1;
+dx = quad_param.x_length/2-quad_param.shoulder_size/2;
 dy = quad_param.y_length/2+quad_param.shoulder_size/2;
 quad_param.leg1_mount_x = dx;
 quad_param.leg1_mount_y = dy;
@@ -128,14 +128,14 @@ ctrl.vel_ki = 0;
 ctrl.vel_kd = 0.0;
 
 %% optimal trajectory problem
-quad_param.total_time = 4;
+quad_param.total_time = 2;
 quad_param.traj_pos_dim = 3;
 quad_param.traj_com_ang_dim = 1;
 quad_param.size_knot = 7; % there are 7 elements in one knots
 quad_param.size_knot_n = 6;
 quad_param.sw_knot_num = 1;  % swing pos profile knots
 quad_param.st_knot_num = 10;  % stance force profile knots
-quad_param.co_knot_num = 2;  % body com pos profile knots
+quad_param.co_knot_num = 7;  % body com pos profile knots
 quad_param.opt_state_size = 2*quad_param.leg_num + 2*quad_param.co_knot_num + quad_param.leg_num*quad_param.sw_knot_num +...
                  quad_param.leg_num*quad_param.st_knot_num*2 + quad_param.size_knot_n*quad_param.co_knot_num+...
                  quad_param.size_knot_n*quad_param.co_knot_num+...
@@ -151,20 +151,20 @@ quad_param.st_knot_state_size = quad_param.size_knot_n*quad_param.st_knot_num*2*
 quad_param.swing_height = 0.05;
 
 quad_param.terrain_u2 = ground.terrain_u;
-quad_param.weight_ratio = 0.4;
-quad_param.max_foot_force_vel = 5.6;
+quad_param.weight_ratio = 1;
+quad_param.max_foot_force_vel = 35.6;
 quad_param.max_foot_pos_vel   = 1.8;
-quad_param.max_com_pos_vel   = 0.5;
+quad_param.max_com_pos_vel   = 0.04;
 quad_param.swing_bound = 0.07;
-quad_param.com_bound = 0.07;
-quad_param.com_pitch_bound = 0.5;
+quad_param.com_bound = 0.04;
+quad_param.com_pitch_bound = 0.08;
 
 quad_param.num_collo_point = 32;
 
-quad_param.opt_obj_stance_Fxy_penalty = 0.55;
-quad_param.opt_obj_stance_Fz_penalty = 0.07;
-quad_param.opt_obj_stance_Fvel_penalty = 0.05;
-quad_param.opt_obj_com_pos_penalty = 0.6;
+quad_param.opt_obj_stance_Fxy_penalty = 0.15;
+quad_param.opt_obj_stance_Fz_penalty = 0.04;
+quad_param.opt_obj_stance_Fvel_penalty = 0.25;
+quad_param.opt_obj_com_pos_penalty = 2.6;
 quad_param.opt_obj_swing_pos_penalty = 0.6;
 
 
