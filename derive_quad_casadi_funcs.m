@@ -300,10 +300,10 @@ wb = B*com_ang_vel;
 dwb = B*com_ang_acc;
 
 % body inertia
-I = quad_param.body_inertia/100;
+I = param.body_inertia/param.force_scale;
 grasp_tgt = [R_ec'*[0;
               0;
-              param.total_mass/100*param.g]+param.total_mass/100*R_ec'*com_acc;
+              param.total_mass/param.force_scale*param.g]+param.total_mass/param.force_scale*R_ec'*com_acc;
              I*dwb+VecToso3(wb)*I*wb]; 
 
 % swing foot dynamics
@@ -311,12 +311,13 @@ for i=1:param.leg_num
     phase_time = sp.getPhaseTime(sym_state,i,1);
     add_weight  = if_else(cur_t >= phase_time(1) & cur_t < phase_time(2), 1, 0);
     grasp_tgt = grasp_tgt + add_weight*[[0;0;0];...
-       -VecToso3(param.t_cs(:,i))*R_ec'*[0;0;(param.upper_leg_mass+param.lower_leg_mass)/100*param.g]];
+       -VecToso3(param.t_cs(:,i))*R_ec'*[0;0;(param.upper_leg_mass+param.lower_leg_mass)/param.force_scale*param.g]];
 %     % no dynamics yet
-%     foot_pos = foot_pos(:,i);
-%     foot_vel = foot_pos.jacobian(cur_t);
-%     foot_acc = foot_vel.jacobian(cur_t); 
-%     grasp_tgt = grasp_tgt + [(param.upper_leg_mass+param.lower_leg_mass)*R_ec'*foot_acc;]
+    curr_foot = foot_pos(:,i);
+    foot_vel = curr_foot.jacobian(cur_t);
+    foot_acc = foot_vel.jacobian(cur_t); 
+    grasp_tgt = grasp_tgt + add_weight*[[0;0;0];...
+       VecToso3(param.t_cs(:,i))*(param.upper_leg_mass+param.lower_leg_mass)/param.force_scale*R_ec'*foot_acc];
 end
 
          

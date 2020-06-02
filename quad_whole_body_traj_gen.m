@@ -6,10 +6,10 @@ init_quad_whole_body_ctrl;
 % formulate optimal stance on flat ground
 stance_origin = [0; 0; quad_param.leg_l2; ...       % pos x y z, 
                  0; 0; 0; ...                       % orientation roll, pitch, yaw
-                 -10/180*pi; 0; 90/180*pi;...                % leg1 angles
-                 10/180*pi; 0; 90/180*pi;...                % leg2 angles
-                 10/180*pi; 0; 90/180*pi;...                % leg3 angles
-                 -10/180*pi; 0; 90/180*pi;...                % leg4 angles
+                 -13/180*pi; 0; 90/180*pi;...                % leg1 angles
+                 13/180*pi; 0; 90/180*pi;...                % leg2 angles
+                 13/180*pi; 0; 90/180*pi;...                % leg3 angles
+                 -13/180*pi; 0; 90/180*pi;...                % leg4 angles
                  0;0;quad_param.total_mass*quad_param.g/quad_param.leg_num;... % foot 1 force
                  0;0;quad_param.total_mass*quad_param.g/quad_param.leg_num;... % foot 2 force
                  0;0;quad_param.total_mass*quad_param.g/quad_param.leg_num;... % foot 3 force
@@ -17,10 +17,10 @@ stance_origin = [0; 0; quad_param.leg_l2; ...       % pos x y z,
              
 stance_tgt    = [0.15; 0; quad_param.leg_l2; ...       % pos x y z, 
                     0; 0; 0; ...                       % orientation roll, pitch, yaw
-                 -10/180*pi; 0; 90/180*pi;...                % leg1 angles
-                 10/180*pi; 0; 90/180*pi;...                % leg2 angles
-                 10/180*pi; 0; 90/180*pi;...                % leg3 angles
-                 -10/180*pi; 0; 90/180*pi;...                % leg4 angles
+                 -13/180*pi; 0; 90/180*pi;...                % leg1 angles
+                 13/180*pi; 0; 90/180*pi;...                % leg2 angles
+                 13/180*pi; 0; 90/180*pi;...                % leg3 angles
+                 -13/180*pi; 0; 90/180*pi;...                % leg4 angles
                  0; 0;quad_param.total_mass*quad_param.g/quad_param.leg_num;... % foot 1 force
                     0; 0;quad_param.total_mass*quad_param.g/quad_param.leg_num;... % foot 2 force
                     0; 0;quad_param.total_mass*quad_param.g/quad_param.leg_num;... % foot 3 force
@@ -51,7 +51,7 @@ drawnow;
 [opt_state_init, opt_state_soln, lambda, robot_state1, robot_state2] = ...
     quad_flat_optimal_transition_solve(stance_origin, stance_tgt, quad_param);
 %%
-save('quad_opt_output_3', 'opt_state_init', 'opt_state_soln','robot_state1', 'robot_state2');
+save('quad_opt_output_5', 'opt_state_init', 'opt_state_soln','robot_state1', 'robot_state2');
 %% visualize
 %% visualize solution
 ref_com_pos_start = stance_origin(1:3);
@@ -62,7 +62,7 @@ quad_optimal_transition_visualize_plot3(fig_id, opt_state_soln, robot_state1, ro
 
 
 %%
-load('quad_opt_output_3', 'opt_state_init', 'opt_state_soln','robot_state1', 'robot_state2');
+load('quad_opt_output_5', 'opt_state_init', 'opt_state_soln','robot_state1', 'robot_state2');
 addpath('../CasADi')
 import casadi.*
 
@@ -104,6 +104,6 @@ for i=1:size(t_list,2)
     % force is more complicated
     for j = 1:param.leg_num
         foot_force_val = casadi_sx_list_force_func{j}(cur_time, opt_state_soln, F_e_start(:,j), F_e_end(:,j));
-        foot_force_list(j,:,i) = full(foot_force_val)*100;
+        foot_force_list(j,:,i) = full(foot_force_val)*quad_param.force_scale;
     end
 end
