@@ -45,7 +45,7 @@ for i=1:size(t_list,2)
     % force is more complicated
     for j = 1:param.leg_num
         foot_force_val = casadi_sx_list_force_func{j}(cur_time, vis_state, F_e_start(:,j), F_e_end(:,j));
-        foot_force_list{j}(:,i) = full(foot_force_val)*100;
+        foot_force_list{j}(:,i) = full(foot_force_val)*param.force_scale;
     end
 end
 

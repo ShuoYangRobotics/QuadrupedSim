@@ -45,7 +45,7 @@ for i=1:size(t_list,2)
     % force is more complicated
     for j = 1:param.leg_num
         foot_force_val = casadi_sx_list_force_func{j}(cur_time, vis_state, F_e_start(:,j), F_e_end(:,j));
-        foot_force_list{j}(:,i) = full(foot_force_val)*100;
+        foot_force_list{j}(:,i) = full(foot_force_val)*param.force_scale;
     end
 end
 
@@ -113,7 +113,7 @@ for i = 1:param.leg_num
     for j = 1:param.st_knot_num*2
         time = sp.getLegStanceTime(vis_state,i,j,1);
         val = sp.getLegStanceKnot(vis_state,i,j,1);
-        val = val(1:3)*100;
+        val = val(1:3)*param.force_scale;
 %         plot(time, val(1),'ro'); 
 %         plot(time, val(2),'ro'); 
         plot(time, val(3),'ro');

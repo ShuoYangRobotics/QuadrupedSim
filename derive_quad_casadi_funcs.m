@@ -91,7 +91,10 @@ com_val = spline_from_knots_casadi(cur_t, com_knots);
 casadi_sx_com_pos_func = Function('com_pos',{cur_t, sym_state, sym_com_0, sym_com_T},...
       {com_val},...
       {'cur_t','state', 'com0', 'comT'},{'com_pos'});
-  
+com_vel_val = com_val.jacobian(cur_t);
+casadi_sx_com_vel_func = Function('com_vel',{cur_t, sym_state, sym_com_0, sym_com_T},...
+      {com_vel_val},...
+      {'cur_t','state', 'com0', 'comT'},{'com_vel'});
 %% get COM angle
 addpath('../CasADi')
 import casadi.*
@@ -112,6 +115,10 @@ com_angle_val = spline_from_knots_casadi(cur_t, com_angle_knots);
 casadi_sx_com_angle_func = Function('com_angle',{cur_t, sym_state, sym_com_ang_0, sym_com_ang_T},...
       {com_angle_val},...
       {'cur_t','state', 'com_angle0', 'com_angleT'},{'com_ang'});
+com_angle_vel_val =  com_angle_val.jacobian(cur_t); 
+casadi_sx_com_angle_vel_func = Function('com_angle_vel',{cur_t, sym_state, sym_com_ang_0, sym_com_ang_T},...
+      {com_angle_vel_val},...
+      {'cur_t','state', 'com_angle0', 'com_angleT'},{'com_ang_vel'});
   
 %% get leg pos
 addpath('../CasADi')
@@ -145,11 +152,25 @@ for i = 1:param.leg_num
     swing_pos = spline_from_knots_casadi(cur_t, knots);
     
     % store casadi expression
-    func_name = strcat('swing', int2str(i), '_func');
+    func_name = strcat('swing_pos', int2str(i), '_func');
     func = Function(func_name,{cur_t, sym_state, default_pos_0, default_pos_T},...
       {swing_pos},...
-      {'cur_t','state', 'pos_0', 'pos_T'},{'F'});
+      {'cur_t','state', 'pos_0', 'pos_T'},{'pos'});
     casadi_sx_list_swing_pos_func{i} = func;
+    
+    swing_vel = swing_pos.jacobian(cur_t);
+    func_name = strcat('swing_vel', int2str(i), '_func');
+    func = Function(func_name,{cur_t, sym_state, default_pos_0, default_pos_T},...
+      {swing_vel},...
+      {'cur_t','state', 'pos_0', 'pos_T'},{'vel'});
+    casadi_sx_list_swing_vel_func{i} = func;
+    
+    swing_acc = swing_vel.jacobian(cur_t);
+    func_name = strcat('swing_acc', int2str(i), '_func');
+    func = Function(func_name,{cur_t, sym_state, default_pos_0, default_pos_T},...
+      {swing_acc},...
+      {'cur_t','state', 'pos_0', 'pos_T'},{'acc'});
+    casadi_sx_list_swing_acc_func{i} = func;
 end  
 
 %% derive obj 
@@ -260,8 +281,10 @@ import casadi.*
 %       {'t_list','state', 'pos_start', 'pos_end', 'F_start','F_end','com_start','com_end', 'com_ang_start', 'com_ang_end'},{'ceq_grad'});
 
 %% a block of 
-com_pos = casadi_sx_com_pos_func(cur_t, sym_state, sym_com_0, sym_com_T);
-com_ang = casadi_sx_com_angle_func(cur_t, sym_state, sym_com_ang_0, sym_com_ang_T);
+% com_pos = casadi_sx_com_pos_func(cur_t, sym_state, sym_com_0, sym_com_T);
+com_pos = com_val;
+% com_ang = casadi_sx_com_angle_func(cur_t, sym_state, sym_com_ang_0, sym_com_ang_T);
+com_ang = com_angle_val;
 
 roll_ang = com_ang(1);
 pitch_ang = com_ang(2);
@@ -288,22 +311,22 @@ end
 com_vel = com_pos.jacobian(cur_t);
 com_acc = com_vel.jacobian(cur_t);    
 com_ang_vel = com_ang.jacobian(cur_t);
-com_ang_acc = com_ang_vel.jacobian(cur_t);
+% com_ang_acc = com_ang_vel.jacobian(cur_t);
 
 % convert euler angluar velocity to body velocity
 % w_b = B*com_ang_vel;            
-B = [1  0 -sin(pitch_ang);
+B = [1              0              -sin(pitch_ang);
      0  cos(roll_ang) sin(roll_ang)*cos(pitch_ang);
      0 -sin(roll_ang) cos(roll_ang)*cos(pitch_ang)];
 
 wb = B*com_ang_vel;
-dwb = B*com_ang_acc;
+dwb = wb.jacobian(cur_t);
 
 % body inertia
 I = param.body_inertia/param.force_scale;
-grasp_tgt = [R_ec'*[0;
+grasp_tgt = [[0;
               0;
-              param.total_mass/param.force_scale*param.g]+param.total_mass/param.force_scale*R_ec'*com_acc;
+              param.total_mass/param.force_scale*param.g]+param.total_mass/param.force_scale*com_acc;
              I*dwb+VecToso3(wb)*I*wb]; 
 
 % swing foot dynamics
@@ -311,13 +334,13 @@ for i=1:param.leg_num
     phase_time = sp.getPhaseTime(sym_state,i,1);
     add_weight  = if_else(cur_t >= phase_time(1) & cur_t < phase_time(2), 1, 0);
     grasp_tgt = grasp_tgt + add_weight*[[0;0;0];...
-       -VecToso3(param.t_cs(:,i))*R_ec'*[0;0;(param.upper_leg_mass+param.lower_leg_mass)/param.force_scale*param.g]];
+       VecToso3(param.t_cs(:,i))*R_ec'*[0;0;(param.upper_leg_mass+param.lower_leg_mass)/param.force_scale*param.g]];
 %     % no dynamics yet
-    curr_foot = foot_pos(:,i);
-    foot_vel = curr_foot.jacobian(cur_t);
-    foot_acc = foot_vel.jacobian(cur_t); 
-    grasp_tgt = grasp_tgt + add_weight*[[0;0;0];...
-       VecToso3(param.t_cs(:,i))*(param.upper_leg_mass+param.lower_leg_mass)/param.force_scale*R_ec'*foot_acc];
+%     curr_foot = foot_pos(:,i);
+%     foot_vel = curr_foot.jacobian(cur_t);
+%     foot_acc = foot_vel.jacobian(cur_t); 
+%     grasp_tgt = grasp_tgt + add_weight*[[0;0;0];...
+%        VecToso3(param.t_cs(:,i))*(param.upper_leg_mass+param.lower_leg_mass)/param.force_scale*R_ec'*foot_acc];
 end
 
          
@@ -340,22 +363,26 @@ save('casadi_derive_quad','casadi_quad_sx_obj_func',...
                           'casadi_quad_sx_ceq_block_grad_func'); 
 save('casadi_state_derive_quad','casadi_sx_com_angle_func',...
                                'casadi_sx_com_pos_func',...
+                               'casadi_sx_com_angle_vel_func',...
+                               'casadi_sx_com_vel_func',...
                                'casadi_sx_list_force_func',...
-                               'casadi_sx_list_swing_pos_func'); 
+                               'casadi_sx_list_swing_pos_func',...
+                               'casadi_sx_list_swing_vel_func',...
+                               'casadi_sx_list_swing_acc_func'); 
                            
 disp('generate state code')   
-opts = struct('mex', true,'cpp',true);
+opts = struct('mex', true);
 
-casadi_sx_com_angle_func.generate('casadi_sx_com_angle_func_code.cpp');              
-casadi_sx_com_pos_func.generate('casadi_sx_com_pos_func_code.cpp');  
+casadi_sx_com_angle_func.generate('casadi_sx_com_angle_func_code.c', opts);              
+casadi_sx_com_pos_func.generate('casadi_sx_com_pos_func_code.c', opts);  
 
-C_force = CodeGenerator('casadi_sx_list_force_func_code.cpp');
+C_force = CodeGenerator('casadi_sx_list_force_func_code.c', opts);
 for i=1:param.leg_num
 C_force.add(casadi_sx_list_force_func{i});
 end
 C_force.generate();
 
-C_pos = CodeGenerator('casadi_sx_list_swing_pos_func_code.cpp');
+C_pos = CodeGenerator('casadi_sx_list_swing_pos_func_code.c', opts);
 for i=1:param.leg_num
     C_pos.add(casadi_sx_list_swing_pos_func{i});
 end

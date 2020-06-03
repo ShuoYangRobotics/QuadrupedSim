@@ -5,7 +5,7 @@ function [Aineq, bineq] = quad_optimal_transition_linear_ineq(state, robot_state
 sp = TransitionStateProcessor(param);
 
 time_margin = 0.001; % very important!!!!!!
-phase_margin = 1; % very important!!!!!!
+phase_margin = param.total_time/2.2; % very important!!!!!!
 
 c_phase = param.leg_num;   % phase(1) + p_margin < phase(2)  -->  phase(1)- phase(2)  < -p_margin
 
