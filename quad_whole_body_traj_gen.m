@@ -15,7 +15,7 @@ stance_origin = [0; 0; quad_param.leg_l2; ...       % pos x y z,
                  0;0;quad_param.total_mass*quad_param.g/quad_param.leg_num;... % foot 3 force
                  0;0;quad_param.total_mass*quad_param.g/quad_param.leg_num];   % foot 4 force
              
-stance_tgt    = [0.1; 0; quad_param.leg_l2; ...       % pos x y z, 
+stance_tgt    = [0.3; 0; quad_param.leg_l2; ...       % pos x y z, 
                     0; 0; 0; ...                       % orientation roll, pitch, yaw
                  -quad_param.init_base_ang; 0; quad_param.init_elow_ang;...                % leg1 angles
                  quad_param.init_base_ang; 0; quad_param.init_elow_ang;...                % leg2 angles
@@ -60,6 +60,7 @@ quad_optimal_transition_visualize(31,opt_state_soln, robot_state1, robot_state2,
 % plot result trajectory on figure 1
 quad_optimal_transition_visualize_plot3(fig_id, opt_state_soln, robot_state1, robot_state2, ref_com_pos_start, quad_param);
 
+quad_optimal_transition_print_times(opt_state_soln, quad_param);
 
 %% generate list
 quad_generate_trajectory_lists;

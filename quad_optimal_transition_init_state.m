@@ -5,15 +5,15 @@ sp = TransitionStateProcessor(param);
 state_init = zeros(param.opt_state_size,1);
 
 % 2-2
-state_init = sp.setPhaseTime(state_init, [0.07;0.47]*param.total_time,1);     
-state_init = sp.setPhaseTime(state_init, [0.52;0.96]*param.total_time,2);       
-state_init = sp.setPhaseTime(state_init, [0.52;0.96]*param.total_time,3);     
-state_init = sp.setPhaseTime(state_init, [0.07;0.47]*param.total_time,4);         
+% state_init = sp.setPhaseTime(state_init, [0.07;0.47]*param.total_time,1);     
+% state_init = sp.setPhaseTime(state_init, [0.52;0.96]*param.total_time,2);       
+% state_init = sp.setPhaseTime(state_init, [0.52;0.96]*param.total_time,3);     
+% state_init = sp.setPhaseTime(state_init, [0.07;0.47]*param.total_time,4);         
 % 1-1-1-1
-% state_init = sp.setPhaseTime(state_init, [0.01;0.25]*param.total_time,1);     
-% state_init = sp.setPhaseTime(state_init, [0.26;0.50]*param.total_time,2);       
-% state_init = sp.setPhaseTime(state_init, [0.51;0.75]*param.total_time,3);     
-% state_init = sp.setPhaseTime(state_init, [0.76;0.99]*param.total_time,4);           
+state_init = sp.setPhaseTime(state_init, [0.01;0.25]*param.total_time,1);     
+state_init = sp.setPhaseTime(state_init, [0.26;0.50]*param.total_time,2);       
+state_init = sp.setPhaseTime(state_init, [0.51;0.75]*param.total_time,3);     
+state_init = sp.setPhaseTime(state_init, [0.76;0.99]*param.total_time,4);           
 
 
 

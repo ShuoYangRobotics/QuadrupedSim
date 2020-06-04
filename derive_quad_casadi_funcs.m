@@ -305,7 +305,7 @@ for i=1:param.leg_num
     foot_pos(:,i)   = casadi_sx_list_swing_pos_func{i}(cur_t,sym_state,sym_p_0(:,i),sym_p_T(:,i));
     foot_force(1+3*(i-1):3+3*(i-1)) = casadi_sx_list_force_func{i}(cur_t, sym_state, sym_F_0(:,i), sym_F_T(:,i));
     grasp_mtx(1:3,1+3*(i-1):3+3*(i-1)) = eye(3);
-    grasp_mtx(4:6,1+3*(i-1):3+3*(i-1)) = VecToso3(R_ec'*(foot_pos(:,i)-com_pos))*R_ec';
+    grasp_mtx(4:6,1+3*(i-1):3+3*(i-1)) = VecToso3((foot_pos(:,i)-com_pos));
 
 end
 com_vel = com_pos.jacobian(cur_t);
@@ -342,7 +342,7 @@ for i=1:param.leg_num
 %     grasp_tgt = grasp_tgt + add_weight*[[0;0;0];...
 %        VecToso3(param.t_cs(:,i))*(param.upper_leg_mass+param.lower_leg_mass)/param.force_scale*R_ec'*foot_acc];
 end
-
+% grasp_tgt = [0;0;param.total_mass/param.force_scale*param.g;0;0;0];
          
 ceq_block = grasp_mtx*foot_force - grasp_tgt;  
 casadi_quad_sx_ceq_block_func = Function('ceq_block_function',{cur_t, sym_state, sym_p_0, sym_p_T, sym_F_0, sym_F_T, sym_com_0, sym_com_T, sym_com_ang_0, sym_com_ang_T},...

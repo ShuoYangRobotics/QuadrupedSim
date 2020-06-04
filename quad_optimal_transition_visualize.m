@@ -22,7 +22,7 @@ p_e_end = quad_optimal_transition_get_foot_pos_from_state(robot_state2, param);
 F_e_start = quad_optimal_transition_get_foot_force_from_state(robot_state1, param);
 F_e_end = quad_optimal_transition_get_foot_force_from_state(robot_state2, param);
 
-t_list = 0:0.05:param.total_time;  
+t_list = 0:0.01:param.total_time;  
 com_pos_list = zeros(3,size(t_list,2));
 com_angle_list = zeros(3,size(t_list,2));
 foot_pos_list = cell(param.leg_num,1); 
@@ -54,7 +54,7 @@ figure(fig_id)
 set(gcf, 'units','normalized','outerposition',[0.3+0.3*(fig_id-30) 0.2 0.3 0.7]);
 clf; hold on;
 
-subplot_num = 2+param.leg_num*2;
+subplot_num = 1+param.leg_num;
 subplot(subplot_num,2,1);
 % plot com angle curve
 plot(t_list, com_angle_list(1,:)); hold on;

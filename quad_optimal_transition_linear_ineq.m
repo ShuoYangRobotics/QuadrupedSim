@@ -5,7 +5,7 @@ function [Aineq, bineq] = quad_optimal_transition_linear_ineq(state, robot_state
 sp = TransitionStateProcessor(param);
 
 time_margin = 0.001; % very important!!!!!!
-phase_margin = param.total_time/2.2; % very important!!!!!!
+phase_margin = param.total_time/4.3; % very important!!!!!!
 
 c_phase = param.leg_num;   % phase(1) + p_margin < phase(2)  -->  phase(1)- phase(2)  < -p_margin
 
@@ -21,8 +21,8 @@ c_leg_stance = 2*(param.st_knot_num+1); % 0 < t1              -->         0 - t1
                                         % tn < total_time     -->  tn - total_time < 0
 c_total = c_phase + c_leg_swing*param.leg_num + c_leg_stance*param.leg_num;                            
 
-Aineq = spalloc(c_total+param.opt_state_size*2, param.opt_state_size, 63);  
-bineq = zeros(c_total+param.opt_state_size*2,1);
+Aineq = spalloc(c_total, param.opt_state_size, 63);  
+bineq = zeros(c_total,1);
 
 c_start_idx = 0;
 
@@ -106,9 +106,9 @@ for i = 1:param.leg_num
 end
 
 %% variable bounds 
-[lb, ub] = quad_flat_optimal_transition_state_bound(robot_state1, robot_state2,  param);
-Aineq(c_total+1:c_total+param.opt_state_size,:) = -speye(param.opt_state_size);
-bineq(c_total+1:c_total+param.opt_state_size) = -lb;
-Aineq(c_total+1+param.opt_state_size:c_total+param.opt_state_size*2,:) = speye(param.opt_state_size);
-bineq(c_total+1+param.opt_state_size:c_total+param.opt_state_size*2) = ub;
+% [lb, ub] = quad_flat_optimal_transition_state_bound(robot_state1, robot_state2,  param);
+% Aineq(c_total+1:c_total+param.opt_state_size,:) = -speye(param.opt_state_size);
+% bineq(c_total+1:c_total+param.opt_state_size) = -lb;
+% Aineq(c_total+1+param.opt_state_size:c_total+param.opt_state_size*2,:) = speye(param.opt_state_size);
+% bineq(c_total+1+param.opt_state_size:c_total+param.opt_state_size*2) = ub;
 end

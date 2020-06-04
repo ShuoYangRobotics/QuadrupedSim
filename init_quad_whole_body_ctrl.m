@@ -131,14 +131,14 @@ ctrl.vel_kd = 0.0;
 quad_param.init_base_ang = 14/180*pi;
 quad_param.init_elow_ang = 90/180*pi;
 
-quad_param.total_time = 1;
+quad_param.total_time = 4;
 quad_param.dt = 0.02;
 quad_param.traj_pos_dim = 3;
 quad_param.traj_com_ang_dim = 3;
 quad_param.size_knot = 7; % there are 7 elements in one knots
 quad_param.size_knot_n = 6;
 quad_param.sw_knot_num = 1;  % swing pos profile knots
-quad_param.st_knot_num = 10;  % stance force profile knots
+quad_param.st_knot_num = 15;  % stance force profile knots
 quad_param.co_knot_num = 5;  % body com pos profile knots
 quad_param.opt_state_size = 2*quad_param.leg_num + 2*quad_param.co_knot_num + quad_param.leg_num*quad_param.sw_knot_num +...
                  quad_param.leg_num*quad_param.st_knot_num*2 + quad_param.size_knot_n*quad_param.co_knot_num+...
@@ -153,15 +153,15 @@ quad_param.st_knot_state_size = quad_param.size_knot_n*quad_param.st_knot_num*2*
 
 
 quad_param.swing_height = 0.07;
-quad_param.force_scale = 10;
+quad_param.force_scale = 100;
 
 quad_param.terrain_u2 = ground.terrain_u;
 quad_param.weight_ratio = 1.3;
 quad_param.max_foot_force_vel = 55.6;
 quad_param.max_foot_pos_vel   = 2.8;
-quad_param.max_com_pos_vel   = 0.39;
+quad_param.max_com_pos_vel   = 0.09;
 quad_param.swing_bound = 0.08;
-quad_param.com_bound = 0.194;
+quad_param.com_bound = 0.054;
 quad_param.com_pitch_bound = 0.5;
 
 quad_param.num_collo_point = 32;
@@ -169,8 +169,8 @@ quad_param.num_collo_point = 32;
 quad_param.opt_obj_stance_Fxy_penalty = 0.15;
 quad_param.opt_obj_stance_Fz_penalty = 0.04;
 quad_param.opt_obj_stance_Fvel_penalty = 0.25;
-quad_param.opt_obj_com_pos_penalty = 2.6;
-quad_param.opt_obj_swing_pos_penalty = 0.6;
+quad_param.opt_obj_com_pos_penalty = 2.0;
+quad_param.opt_obj_swing_pos_penalty = 0.1;
 
 %% parameters for LQR
 quad_param.dt = 0.01;

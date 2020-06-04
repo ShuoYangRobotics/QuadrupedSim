@@ -113,8 +113,7 @@ for i=1:size(t_list,2)
     end
     curr_u = [reshape(curr_foot_force,3*quad_param.leg_num,1);...
               reshape(curr_foot_vel,3*quad_param.leg_num,1)];
-    a = [0;0;-param.g] + 1/param.total_mass*curr_foot_force*reshape(contact_list(:,i),param.leg_num,1);
-    a'
+ 
     xdot = casadi_quad_LQR_f_func_code('quad_LQR_f_func',x,curr_u, contact_list(:,i));  
     x = x + xdot*quad_param.dt;
 end
