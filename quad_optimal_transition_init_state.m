@@ -42,7 +42,7 @@ for i=1:param.leg_num
         knot_time = phase_t(1)+frac*swing_duration;  
         % time in phase (0,1)
         knot_val = [...
-           init_swing_pos(:)+[0;0;param.swing_height];
+           init_swing_pos(:);
            init_swing_vel(:)...
         ];
         state_init = sp.setLegSwingTime(state_init, knot_time, i, j);

@@ -25,7 +25,7 @@ F_e_start = quad_optimal_transition_get_foot_force_from_state(robot_state1, quad
 F_e_end = quad_optimal_transition_get_foot_force_from_state(robot_state2, quad_param);
 
 
-t_list = 0:quad_param.dt:quad_param.total_time;  
+t_list = 0:0.005:quad_param.total_time;  
 com_pos_list = zeros(3,size(t_list,2));
 com_angle_list = zeros(3,size(t_list,2));
 com_vel_list = zeros(3,size(t_list,2));

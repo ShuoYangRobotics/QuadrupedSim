@@ -15,7 +15,7 @@ stance_origin = [0; 0; quad_param.leg_l2; ...       % pos x y z,
                  0;0;quad_param.total_mass*quad_param.g/quad_param.leg_num;... % foot 3 force
                  0;0;quad_param.total_mass*quad_param.g/quad_param.leg_num];   % foot 4 force
              
-stance_tgt    = [0.3; 0; quad_param.leg_l2; ...       % pos x y z, 
+stance_tgt    = [0.15; 0; quad_param.leg_l2; ...       % pos x y z, 
                     0; 0; 0; ...                       % orientation roll, pitch, yaw
                  -quad_param.init_base_ang; 0; quad_param.init_elow_ang;...                % leg1 angles
                  quad_param.init_base_ang; 0; quad_param.init_elow_ang;...                % leg2 angles

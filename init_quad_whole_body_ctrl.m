@@ -10,10 +10,10 @@ ground.terrain_u = 0.7;
 %% a quad param, this is a standard format
 quad_param.leg_num = 4;
 %%robot body size
-quad_param.x_length = 0.6;
+quad_param.x_length = 0.37;
 quad_param.y_length = 0.3;
 quad_param.z_length = 0.15;
-quad_param.chassis_density = 600;
+quad_param.chassis_density = 740;
 quad_param.shoulder_size = 0.07; 
 quad_param.shoulder_density = 660; 
 quad_param.limb_width = 0.04;
@@ -40,6 +40,9 @@ quad_param.g = 9.805;
 quad_param.leg_l1 = quad_param.upper_length;
 quad_param.leg_l2 = quad_param.lower_length+quad_param.foot_radius;
 
+planner.stand_height = quad_param.leg_l2;
+body.foot_radius = 0.035; % foot density is 0
+body.knee_damping = 0.1;
 %% leg mounts. Used to calculate R_cs t_cs
 dx = quad_param.x_length/2-quad_param.shoulder_size/2;
 dy = quad_param.y_length/2+quad_param.shoulder_size/2;
@@ -159,10 +162,10 @@ quad_param.terrain_u2 = ground.terrain_u;
 quad_param.weight_ratio = 1.3;
 quad_param.max_foot_force_vel = 55.6;
 quad_param.max_foot_pos_vel   = 2.8;
-quad_param.max_com_pos_vel   = 0.09;
+quad_param.max_com_pos_vel   = 0.39;
 quad_param.swing_bound = 0.08;
-quad_param.com_bound = 0.054;
-quad_param.com_pitch_bound = 0.5;
+quad_param.com_bound = 0.124;
+quad_param.com_pitch_bound = 0.1;
 
 quad_param.num_collo_point = 32;
 
