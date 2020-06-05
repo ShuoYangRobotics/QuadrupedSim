@@ -176,6 +176,8 @@ quad_param.opt_obj_com_pos_penalty = 2.0;
 quad_param.opt_obj_swing_pos_penalty = 0.1;
 
 %% parameters for LQR
-quad_param.dt = 0.03;
+quad_param.dt = 0.003;
+quad_param.size_x = 24;
+quad_param.size_u = 24;
 
 
