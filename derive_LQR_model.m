@@ -33,9 +33,10 @@ u = [F_e;foot_vel];
 
 
 % helper values
-roll_ang = com_ang_e(1);
+%% orientation
+roll_ang  = com_ang_e(1);
 pitch_ang = com_ang_e(2);
-yaw_ang = com_ang_e(3);
+yaw_ang   = com_ang_e(3);
 R_ec =   [ cos(yaw_ang)  -sin(yaw_ang)    0;
            sin(yaw_ang)   cos(yaw_ang)    0;
                      0               0    1]*...
@@ -65,7 +66,7 @@ for i = 1:param.leg_num
     % no dynamics yet
     swing_dynamics = VecToso3(param.t_cs(:,i))*R_ec'*[0;0;(param.upper_leg_mass+param.lower_leg_mass)*-param.g];
     p_c = R_ec'*(foot_pos((i-1)*3+1:(i-1)*3+3) - com_pos_e);
-    w_acc = w_acc + swing_dynamics*(1-contact(i)) + VecToso3(p_c)*R_ec'*contact(i)*F_e((i-1)*3+1:(i-1)*3+3);
+    w_acc = w_acc + swing_dynamics*(1-contact(i)) + contact(i)*VecToso3(p_c)*R_ec'*F_e((i-1)*3+1:(i-1)*3+3);
 end
 com_w_c_dot = inv(I)*(w_acc);     %  I^-1(M - w x Iw) = wdot 
 foot_pos_dot = foot_vel;
@@ -85,10 +86,10 @@ casadi_quad_LQR_f_func.generate('casadi_quad_LQR_f_func_code.c', opts);
 casadi_quad_LQR_A_func.generate('casadi_quad_LQR_A_func_code.c', opts);             
 casadi_quad_LQR_B_func.generate('casadi_quad_LQR_B_func_code.c', opts); 
 
-mex casadi_quad_LQR_f_func_code.c
-mex casadi_quad_LQR_A_func_code.c
-mex casadi_quad_LQR_B_func_code.c
+% mex casadi_quad_LQR_f_func_code.c
+% mex casadi_quad_LQR_A_func_code.c
+% mex casadi_quad_LQR_B_func_code.c
 
-% mex -v GCC='/usr/local/gcc-6.3/bin/gcc-6.3' casadi_quad_LQR_f_func_code.c
-% mex -v GCC='/usr/local/gcc-6.3/bin/gcc-6.3' casadi_quad_LQR_A_func_code.c
-% mex -v GCC='/usr/local/gcc-6.3/bin/gcc-6.3' casadi_quad_LQR_B_func_code.c
+mex -v GCC='/usr/local/gcc-6.3/bin/gcc-6.3' casadi_quad_LQR_f_func_code.c
+mex -v GCC='/usr/local/gcc-6.3/bin/gcc-6.3' casadi_quad_LQR_A_func_code.c
+mex -v GCC='/usr/local/gcc-6.3/bin/gcc-6.3' casadi_quad_LQR_B_func_code.c

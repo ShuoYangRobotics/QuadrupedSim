@@ -124,11 +124,11 @@ quad_param.M3 = [[1, 0, 0, quad_param.leg_l1+quad_param.leg_l2];  % home configu
 quad_param.home_ang = [0;0;pi/2];        
 % parameters for leg control 
 ctrl.pos_kp = 30;
-ctrl.pos_ki = 0;
-ctrl.pos_kd = 0;
-ctrl.vel_kp = 4.4;
-ctrl.vel_ki = 0;
-ctrl.vel_kd = 0.0;
+ctrl.pos_ki = 0.02;
+ctrl.pos_kd = 0.01;
+ctrl.vel_kp = 6.4;
+ctrl.vel_ki = 0.02;
+ctrl.vel_kd = 0.01;
 
 %% optimal trajectory problem
 quad_param.init_base_ang = 14/180*pi;
@@ -141,8 +141,8 @@ quad_param.traj_com_ang_dim = 3;
 quad_param.size_knot = 7; % there are 7 elements in one knots
 quad_param.size_knot_n = 6;
 quad_param.sw_knot_num = 1;  % swing pos profile knots
-quad_param.st_knot_num = 15;  % stance force profile knots
-quad_param.co_knot_num = 5;  % body com pos profile knots
+quad_param.st_knot_num = 25;  % stance force profile knots
+quad_param.co_knot_num = 8;  % body com pos profile knots
 quad_param.opt_state_size = 2*quad_param.leg_num + 2*quad_param.co_knot_num + quad_param.leg_num*quad_param.sw_knot_num +...
                  quad_param.leg_num*quad_param.st_knot_num*2 + quad_param.size_knot_n*quad_param.co_knot_num+...
                  quad_param.size_knot_n*quad_param.co_knot_num+...
@@ -159,13 +159,13 @@ quad_param.swing_height = 0.07;
 quad_param.force_scale = 100;
 
 quad_param.terrain_u2 = ground.terrain_u;
-quad_param.weight_ratio = 1.3;
+quad_param.weight_ratio = 1.5;
 quad_param.max_foot_force_vel = 55.6;
-quad_param.max_foot_pos_vel   = 2.8;
-quad_param.max_com_pos_vel   = 0.39;
+quad_param.max_foot_pos_vel   = 25.8;
+quad_param.max_com_pos_vel   = 0.5;
 quad_param.swing_bound = 0.08;
-quad_param.com_bound = 0.124;
-quad_param.com_pitch_bound = 0.1;
+quad_param.com_bound = 0.264;
+quad_param.com_pitch_bound = 0.4;
 
 quad_param.num_collo_point = 32;
 
@@ -176,6 +176,6 @@ quad_param.opt_obj_com_pos_penalty = 2.0;
 quad_param.opt_obj_swing_pos_penalty = 0.1;
 
 %% parameters for LQR
-quad_param.dt = 0.01;
+quad_param.dt = 0.03;
 
 

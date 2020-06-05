@@ -286,18 +286,30 @@ com_pos = com_val;
 % com_ang = casadi_sx_com_angle_func(cur_t, sym_state, sym_com_ang_0, sym_com_ang_T);
 com_ang = com_angle_val;
 
-roll_ang = com_ang(1);
+%% orientation
+roll_ang  = com_ang(1);
 pitch_ang = com_ang(2);
-yaw_ang = com_ang(3);
+yaw_ang   = com_ang(3);
 R_ec =   [ cos(yaw_ang)  -sin(yaw_ang)    0;
-       sin(yaw_ang)   cos(yaw_ang)    0;
-                 0               0    1]*...
-     [cos(pitch_ang) 0 sin(pitch_ang);
-                   0 1              0;
-     -sin(pitch_ang) 0 cos(pitch_ang)]*...
-     [             1              0              0;
+           sin(yaw_ang)   cos(yaw_ang)    0;
+                     0               0    1]*...
+         [cos(pitch_ang) 0 sin(pitch_ang);
+                       0 1              0;
+         -sin(pitch_ang) 0 cos(pitch_ang)]*...
+         [         1              0              0;
                    0  cos(roll_ang) -sin(roll_ang);
-                   0  sin(roll_ang)  cos(roll_ang)];   
+                   0  sin(roll_ang)  cos(roll_ang)];
+% convert euler angluar velocity to body velocity
+% w_b = B*com_ang_vel;     
+% com_ang_vel = Binv*w_b;               
+B = [1  0 -sin(pitch_ang);
+     0  cos(roll_ang) sin(roll_ang)*cos(pitch_ang);
+     0 -sin(roll_ang) cos(roll_ang)*cos(pitch_ang)];      
+Binv = [1  sin(roll_ang)*tan(pitch_ang) cos(roll_ang)*tan(pitch_ang);
+        0  cos(roll_ang)                               -sin(roll_ang);
+        0  sin(roll_ang)/cos(pitch_ang) cos(roll_ang)/cos(pitch_ang)];   
+
+%% dynamic constraint 
 grasp_mtx = SX.zeros(6,3*param.leg_num);
 foot_pos = SX.zeros(param.traj_pos_dim, param.leg_num);
 foot_force = SX.zeros(param.traj_pos_dim*param.leg_num,1);
@@ -305,19 +317,12 @@ for i=1:param.leg_num
     foot_pos(:,i)   = casadi_sx_list_swing_pos_func{i}(cur_t,sym_state,sym_p_0(:,i),sym_p_T(:,i));
     foot_force(1+3*(i-1):3+3*(i-1)) = casadi_sx_list_force_func{i}(cur_t, sym_state, sym_F_0(:,i), sym_F_T(:,i));
     grasp_mtx(1:3,1+3*(i-1):3+3*(i-1)) = eye(3);
-    grasp_mtx(4:6,1+3*(i-1):3+3*(i-1)) = VecToso3((foot_pos(:,i)-com_pos));
+    grasp_mtx(4:6,1+3*(i-1):3+3*(i-1)) = R_ec'*VecToso3((foot_pos(:,i)-com_pos))*R_ec';
 
 end
 com_vel = com_pos.jacobian(cur_t);
 com_acc = com_vel.jacobian(cur_t);    
 com_ang_vel = com_ang.jacobian(cur_t);
-% com_ang_acc = com_ang_vel.jacobian(cur_t);
-
-% convert euler angluar velocity to body velocity
-% w_b = B*com_ang_vel;            
-B = [1              0              -sin(pitch_ang);
-     0  cos(roll_ang) sin(roll_ang)*cos(pitch_ang);
-     0 -sin(roll_ang) cos(roll_ang)*cos(pitch_ang)];
 
 wb = B*com_ang_vel;
 dwb = wb.jacobian(cur_t);

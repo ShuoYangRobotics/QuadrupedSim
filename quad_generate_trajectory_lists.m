@@ -1,4 +1,4 @@
-load('quad_opt_output_5', 'opt_state_init', 'opt_state_soln','robot_state1', 'robot_state2');
+load('quad_opt_output_6', 'opt_state_init', 'opt_state_soln','robot_state1', 'robot_state2');
 addpath('../CasADi')
 import casadi.*
 
@@ -25,7 +25,7 @@ F_e_start = quad_optimal_transition_get_foot_force_from_state(robot_state1, quad
 F_e_end = quad_optimal_transition_get_foot_force_from_state(robot_state2, quad_param);
 
 
-t_list = 0:0.005:quad_param.total_time;  
+t_list = 0:quad_param.dt:quad_param.total_time;  
 com_pos_list = zeros(3,size(t_list,2));
 com_angle_list = zeros(3,size(t_list,2));
 com_vel_list = zeros(3,size(t_list,2));
@@ -114,7 +114,42 @@ for i=1:size(t_list,2)
     curr_u = [reshape(curr_foot_force,3*quad_param.leg_num,1);...
               reshape(curr_foot_vel,3*quad_param.leg_num,1)];
  
+    % test w_c_dot
+    roll_ang  = x(4);
+    pitch_ang = x(5);
+    yaw_ang   = x(6);
+    R_ec =   [ cos(yaw_ang)  -sin(yaw_ang)    0;
+               sin(yaw_ang)   cos(yaw_ang)    0;
+                         0               0    1]*...
+             [cos(pitch_ang) 0 sin(pitch_ang);
+                           0 1              0;
+             -sin(pitch_ang) 0 cos(pitch_ang)]*...
+             [         1              0              0;
+                       0  cos(roll_ang) -sin(roll_ang);
+                       0  sin(roll_ang)  cos(roll_ang)];
+    com_w_c = x(10:12);
+    foot_pos = x(13:end);
+    F_e = reshape(curr_foot_force,3*quad_param.leg_num,1);
+    com_pos_e = x(1:3);
+    I = quad_param.body_inertia;
+    w_acc = -VecToso3(com_w_c)*I*com_w_c;
+    for j = 1:quad_param.leg_num
+    % no dynamics yet
+        swing_dynamics = VecToso3(quad_param.t_cs(:,j))*R_ec'*[0;0;(quad_param.upper_leg_mass+quad_param.lower_leg_mass)*-quad_param.g];
+        p_c = R_ec'*(foot_pos((j-1)*3+1:(j-1)*3+3) - com_pos_e);
+        w_acc = w_acc + swing_dynamics*(1-contact_list(j,i)) + contact_list(j,i)*VecToso3(p_c)*R_ec'*F_e((j-1)*3+1:(j-1)*3+3);
+    end
+    com_w_c_dot = inv(I)*(w_acc); 
+          
+          
     xdot = casadi_quad_LQR_f_func_code('quad_LQR_f_func',x,curr_u, contact_list(:,i));  
-    x = x + xdot*quad_param.dt;
+    A = casadi_quad_LQR_A_func_code('quad_LQR_A_func',x,curr_u, contact_list(:,i));  
+    B = casadi_quad_LQR_B_func_code('quad_LQR_B_func',x,curr_u, contact_list(:,i));  
+    xdot_l = A*x + B*curr_u;
+    xdot(xdot>3) = 3;
+    xdot(xdot<-3) = -3;
+    xdot_l(xdot_l>3) = 3;
+    xdot_l(xdot_l<-3) = -3;
+    x = x + xdot_l*quad_param.dt;
 end
 

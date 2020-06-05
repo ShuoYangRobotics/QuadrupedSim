@@ -51,7 +51,7 @@ drawnow;
 [opt_state_init, opt_state_soln, lambda, robot_state1, robot_state2] = ...
     quad_flat_optimal_transition_solve(stance_origin, stance_tgt, quad_param);
 %%
-save('quad_opt_output_5', 'opt_state_init', 'opt_state_soln','robot_state1', 'robot_state2');
+save('quad_opt_output_6', 'opt_state_init', 'opt_state_soln','robot_state1', 'robot_state2');
 %% visualize
 %% visualize solution
 ref_com_pos_start = stance_origin(1:3);
@@ -63,4 +63,4 @@ quad_optimal_transition_visualize_plot3(fig_id, opt_state_soln, robot_state1, ro
 quad_optimal_transition_print_times(opt_state_soln, quad_param);
 
 %% generate list
-quad_generate_trajectory_lists;
+quad_generate_trajectory_lists;                                                           
